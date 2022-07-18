@@ -13,7 +13,11 @@ function copyHeader(headerName: string, to: Headers, from: Headers) {
 
 async function reqHandler(req: Request) {
   const path = new URL(req.url).pathname;
-  const proxyRes = await fetch(API_URL + path);
+  const proxyRes = await fetch(API_URL + path, {
+    headers: {
+      Origin: API_URL,
+    }
+  });
   const headers = new Headers();
   copyHeader("content-length", headers, proxyRes.headers);
   copyHeader("content-type", headers, proxyRes.headers);

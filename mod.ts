@@ -22,8 +22,11 @@ async function reqHandler(req: Request) {
     headers.set("Access-Control-Allow-Origin", origin);
   }
 
-  const path = new URL(req.url).pathname;
-  const proxyRes = await fetch(API_URL + path, {
+  const url = new URL(req.url);
+  const path = url.pathname + url.search;
+  const normalized = new URL(path, API_URL).href;
+
+  const proxyRes = await fetch(normalized, {
     headers: {
       Origin: API_URL,
     }

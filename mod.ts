@@ -12,19 +12,29 @@ function copyHeader(headerName: string, to: Headers, from: Headers) {
 }
 
 async function reqHandler(req: Request) {
+  const headers = new Headers();
+  headers.set("Access-Control-Allow-Methods", "GET");
+  headers.set("Access-Control-Allow-Headers", "Content-Type");
+
+  // checking for cors (to limit my billing)
+  const origin = req.headers.get("Origin");
+  if (origin && (origin.includes("annex.deno.dev") || origin.includes("annex.vixalien.com"))) {
+    headers.set("Access-Control-Allow-Origin", origin);
+  }
+
   const path = new URL(req.url).pathname;
   const proxyRes = await fetch(API_URL + path, {
     headers: {
       Origin: API_URL,
     }
   });
-  const headers = new Headers();
-  headers.set("Access-Control-Allow-Origin", "https://annex.deno.dev, https://annex.vixalien.com");
-  headers.set("Access-Control-Allow-Methods", "GET");
-  headers.set("Access-Control-Allow-Headers", "Content-Type");
+
   copyHeader("content-length", headers, proxyRes.headers);
   copyHeader("content-type", headers, proxyRes.headers);
   copyHeader("content-disposition", headers, proxyRes.headers);
+
+  //
+
   return new Response(proxyRes.body, {
     status: proxyRes.status,
     headers,

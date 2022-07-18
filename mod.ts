@@ -19,6 +19,9 @@ async function reqHandler(req: Request) {
     }
   });
   const headers = new Headers();
+  headers.set("Access-Control-Allow-Origin", "https://annex.deno.dev, https://annex.vixalien.com");
+  headers.set("Access-Control-Allow-Methods", "GET");
+  headers.set("Access-Control-Allow-Headers", "Content-Type");
   copyHeader("content-length", headers, proxyRes.headers);
   copyHeader("content-type", headers, proxyRes.headers);
   copyHeader("content-disposition", headers, proxyRes.headers);
